@@ -27,12 +27,12 @@ En caso de no coincidir ningún id, mostrar en consola un error “Not found”
 class ProductManager{
     constructor(){
         this.products = []
-        this.productId = 1
+        this.productCode = 1
     }
 
     // Añadir un producto requiriendo estos campos.
     addProduct(product){
-        if(!product.title, !product.desc, !product.price, !product.thumbnail, !product.code, !product.stock){
+        if(!product.title || !product.desc || !product.price || !product.thumbnail || !product.code || !product.stock){
             console.error("Los campos son obligatorios.")
             return
         }
@@ -43,7 +43,7 @@ class ProductManager{
             return
         }
 
-        product.id = this.productId++ // ID Autoincrementable.
+        product.id = this.productCode++ // Code Autoincrementable.
         this.products.push(product) // Añadir producto al ARRAY
         console.log(`Producto agregado correctamente: ${product.title}`)
     }
@@ -58,7 +58,7 @@ class ProductManager{
         const Product = this.products.find(existingProduct => existingProduct.id === id) 
 
         if(!Product){
-            console.error("Producto no encontrado")
+            return "Producto no encontrado"
         }else{
             return Product
         }
@@ -105,6 +105,8 @@ ProductManagerInstance.addProduct(Product3)
 console.log("Todos los productos: ", ProductManagerInstance.getProducts())
 
 // Buscamos el ID de algun producto
-const FindProductId = 4
+// 1, 2, 3 Encontrara un producto.
+// Otros ID daran un mensaje mostrando que "X" ID No fue encontrado.
+const FindProductId = 3
 const FoundProduct = ProductManagerInstance.getProductById(FindProductId)
 console.log(`Producto con ID: ${FindProductId}`, FoundProduct)
