@@ -58,7 +58,6 @@ class ProductManager{
         await fs.writeFile(this.path, JSON.stringify(productos));
     }
     
-
     // Eliminamos X producto
     deleteProduct = async (id) => {
         let productos = JSON.parse(await fs.readFile(this.path, "utf-8"))
@@ -72,7 +71,6 @@ class ProductManager{
             console.log("ID No encontrado.")
         }
     }
-    
 }
 
 // Instanciar, heredar, practicar.
@@ -129,4 +127,3 @@ console.log(`Producto con ID: ${FindProductId}`, FoundProduct) // Mostrara por c
 // Eliminar producto
 const productIdToDelete = "6ecb0c19061da3665066"; // Eliminara {prod1}
 ProductManagerInstance.deleteProduct(productIdToDelete);
-
