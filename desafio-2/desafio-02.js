@@ -61,11 +61,21 @@ class ProductManager{
 
     // Eliminamos X producto
     deleteProduct = async (id) => {
+        let productos = JSON.parse(await fs.readFile(this.path, "utf-8"))
+        const index = productos.findIndex((prod)=>prod.id === id)
+        if(index !== -1){
+            productos.splice(index, 1)
+
+            await fs.writeFile(this.path, JSON.stringify(productos))
+            console.log("Producto eliminado.")
+        }else{
+            console.log("ID No encontrado.")
+        }
     }
     
 }
 
-// Uso.
+// Instanciar, heredar, practicar.
 const ProductManagerInstance = new ProductManager()
 
 // Cargamos productos.
@@ -90,12 +100,21 @@ const prod2 = {
     stock: 5
 }
 
+/*
+Manual de uso
 
-// Añadimos productos al JSON
+1) Añadir producto mediante addProduct(prod)
+1.5) En caso de ser necesario, sobreescribir datos de los {prods}, si no, puede omitirse
+2) Mostrar todos los productos mediante console.log({productos})
+3) Buscar un ID especifico y mostrarlo por consola, usando getProductById()
+4) Eliminar el producto mediante ID usando deleteProduct(id)
+*/
+
+// Añadimos productos a productos.json{}
 ProductManagerInstance.addProduct(prod1)
 ProductManagerInstance.addProduct(prod2)
 
-// Actualizamos producto (STOCK y/o PRICE)
+// Actualizamos productos (STOCK y/o PRICE)
 ProductManagerInstance.updateProduct(prod1)
 ProductManagerInstance.updateProduct(prod2)
 
@@ -108,3 +127,6 @@ const FoundProduct = ProductManagerInstance.getProductById(FindProductId)
 console.log(`Producto con ID: ${FindProductId}`, FoundProduct) // Mostrara por consola el {prod1}
 
 // Eliminar producto
+const productIdToDelete = "6ecb0c19061da3665066"; // Eliminara {prod1}
+ProductManagerInstance.deleteProduct(productIdToDelete);
+

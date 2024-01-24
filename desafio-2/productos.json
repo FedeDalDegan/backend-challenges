@@ -1,1 +1,1 @@
-[{"id":"6ecb0c19061da3665066","title":"Producto 1","desc":"Descripcion de producto 1","price":30,"thumbnail":"./ruta/img1.jpg","code":1,"stock":20},{"id":"194c5227d8acd83db884","title":"Producto 2","desc":"Descripcion de producto 2","price":150,"thumbnail":"./ruta/img2.jpg","code":2,"stock":10}]
+[{"id":"194c5227d8acd83db884","title":"Producto 2","desc":"Descripcion de producto 2","price":150,"thumbnail":"./ruta/img2.jpg","code":2,"stock":5}]
