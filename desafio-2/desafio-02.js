@@ -1,129 +1,80 @@
 // Renombramos las promesas para mejor lectura
 import {promises as fs} from "fs"
-import crypto from "crypto"
 
-class ProductManager{
-    constructor(){
-        this.products = []
-        this.productCode = 1
-        this.path = "./productos.json"
+export class ProductManager{
+    constructor(path){ // Se lo tendremos que enviar como parametro a las instancias generadas
+        this.path = path // "./productos.json/"
     }
 
     // Añadir un producto requiriendo estos campos.
-    addProduct = async (product) => {
-        if(!product.title || !product.desc || !product.price || !product.thumbnail || !product.code || !product.stock){
-            console.error("No dejar campos vacios.")
-            return
+    addProduct = async(newProduct) => {
+        const prods = JSON.parse(await fs.readFile(this.path, "utf-8")) // Leemos el array de productos.json
+        const i = prods.findIndex(prod => prod.code === newProduct.code)
+        if(newProduct.title && newProduct.desc 
+            && newProduct.price && newProduct.thumbnail && 
+            newProduct.code && newProduct.stock && newProduct.id){
+            if(i === -1){ // Preguntamos si es = a -1
+                prods.push(newProduct)
+                await fs.writeFile(this.path, JSON.stringify(prods))
+                return "Producto creado"
+            }else{
+                return "Producto ya existente."
+            }
+        }else{
+            return "Los campos son obligatorios."
         }
-
-        // Verificacion de codigo existente.
-        if(this.products.some(existingProduct => existingProduct.code === product.code)){
-            console.error("Codigo ya existente.")
-            return
-        }
-
-        product.code = this.productCode++; // Codigo autoincrementable
-        this.products.push(product); // Añadir producto al ARRAY
-    
-        await fs.writeFile(this.path, JSON.stringify(this.products));
-    
-        console.log(`Producto agregado: ${product.title}`);
     }
 
     // Mostrar el ARRAY de productos.
-    getProducts(){
-        return this.products
+    getProducts = async() => {
+        const prods = JSON.parse(await fs.readFile(this.path, "utf-8"))
+        console.log(prods)
     }
 
     // Buscamos un producto que coincida con el ID
-    getProductById(id){
-        const Product = this.products.find(existingProduct => existingProduct.id === id) 
-
-        if(!Product){
-            return "Producto no encontrado"
+    getProductById = async(id) => {
+        const prods = JSON.parse(await fs.readFile(this.path, "utf-8"))
+        const prod = prods.find(product => product.id === id)
+        if(prod){
+            console.log(prod)
         }else{
-            return Product
+            console.log("No se encuentra un producto con este ID")
         }
     }
 
     // Sobreescribimos la informacion (stock y precio) de un producto existente
-    updateProduct = async (producto) => {
-        let productos = JSON.parse(await fs.readFile(this.path, "utf-8"));
-        const i = await productos.findIndex((prod) => prod.id === producto.id);
-        if (i !== -1) {
-            productos[i].stock += producto.stock; // SUMAMOS AL STOCK ( += )
-            productos[i].price = producto.price; // ACTUALIZAMOS NUEVO PRECIO ( = )
+    updateProduct = async (id, newProduct) => {
+        const prods = JSON.parse(await fs.readFile(this.path, "utf-8"))
+        const i = prods.findIndex(product => product.id === id)
+        // En este caso, el producto existe. Asi que actualizaremos sus datos
+        if(i != -1){ // Preguntamos que sea DIFERENTE de -1
+            prods[i].title = newProduct.title
+            prods[i].desc = newProduct.desc
+            prods[i].thumbnail = newProduct.thumbnail
+            prods[i].price = newProduct.price
+            prods[i].stock = newProduct.stock
+            prods[i].code = newProduct.code
+
+            // Una vez actualizado, lo escribimos en nuestro json
+            await fs.writeFile(this.path, JSON.stringify(prods))
+            return "Producto actualizado"
+        }else{
+            return "Producto no existente"
         }
-    
-        await fs.writeFile(this.path, JSON.stringify(productos));
     }
     
     // Eliminamos X producto
     deleteProduct = async (id) => {
-        let productos = JSON.parse(await fs.readFile(this.path, "utf-8"))
-        const index = productos.findIndex((prod)=>prod.id === id)
-        if(index !== -1){
-            productos.splice(index, 1)
-
-            await fs.writeFile(this.path, JSON.stringify(productos))
-            console.log("Producto eliminado.")
+        const prods = JSON.parse(await fs.readFile(this.path, "utf-8"))
+        const i = prods.findIndex(product => product.id === id)
+        
+        if(i != -1){
+            const prodsFiltered = prods.filter(prod=>prod.id!=id)
+        
+            await fs.writeFile(this.path, JSON.stringify(prodsFiltered))
+            return "Producto eliminado"
         }else{
-            console.log("ID No encontrado.")
+            return "Producto no existente"
         }
     }
 }
-
-// Instanciar, heredar, practicar.
-const ProductManagerInstance = new ProductManager()
-
-// Cargamos productos.
-// Si se modifica STOCk o PRICE, se sobreescribira en el archivo "productos.json"
-const prod1 = {
-    id: "6ecb0c19061da3665066", // crypto.randomBytes(10).toString("hex"),
-    title: "Producto 1",
-    desc: "Descripcion de producto 1",
-    price: 30,
-    thumbnail: "./ruta/img1.jpg",
-    code: 1,
-    stock: 20
-}
-
-const prod2 = {
-    id: "194c5227d8acd83db884", // crypto.randomBytes(10).toString("hex"),
-    title: "Producto 2",
-    desc: "Descripcion de producto 2",
-    price: 150,
-    thumbnail: "./ruta/img2.jpg",
-    code: 2,
-    stock: 5
-}
-
-/*
-Manual de uso
-
-1) Añadir producto mediante addProduct(prod)
-1.5) En caso de ser necesario, sobreescribir datos de los {prods}, si no, puede omitirse
-2) Mostrar todos los productos mediante console.log({productos})
-3) Buscar un ID especifico y mostrarlo por consola, usando getProductById()
-4) Eliminar el producto mediante ID usando deleteProduct(id)
-*/
-
-// Añadimos productos a productos.json{}
-ProductManagerInstance.addProduct(prod1)
-ProductManagerInstance.addProduct(prod2)
-
-// Actualizamos productos (STOCK y/o PRICE)
-ProductManagerInstance.updateProduct(prod1)
-ProductManagerInstance.updateProduct(prod2)
-
-// Lista de todos los productos añadidos
-console.log("Todos los productos: ", ProductManagerInstance.getProducts()) // Mostrara el array de productos
-
-// Encontrar producto por ID
-const FindProductId = "6ecb0c19061da3665066" // Id producto 1
-const FoundProduct = ProductManagerInstance.getProductById(FindProductId)
-console.log(`Producto con ID: ${FindProductId}`, FoundProduct) // Mostrara por consola el {prod1}
-
-// Eliminar producto
-const productIdToDelete = "6ecb0c19061da3665066"; // Eliminara {prod1}
-ProductManagerInstance.deleteProduct(productIdToDelete);
