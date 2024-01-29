@@ -48,12 +48,12 @@ export class ProductManager{
         const i = prods.findIndex(product => product.id === id)
         // En este caso, el producto existe. Asi que actualizaremos sus datos
         if(i != -1){ // Preguntamos que sea DIFERENTE de -1
-            prods[i].title = newProduct.title
-            prods[i].desc = newProduct.desc
-            prods[i].thumbnail = newProduct.thumbnail
-            prods[i].price = newProduct.price
-            prods[i].stock = newProduct.stock
-            prods[i].code = newProduct.code
+            prods[i].title = newProduct.title !== null ? newProduct.title : prods[i].title;
+            prods[i].desc = newProduct.desc !== null ? newProduct.desc : prods[i].desc;
+            prods[i].thumbnail = newProduct.thumbnail !== null ? newProduct.thumbnail : prods[i].thumbnail;
+            prods[i].price = newProduct.price !== null ? newProduct.price : prods[i].price;
+            prods[i].stock = newProduct.stock !== null ? newProduct.stock : prods[i].stock;
+            prods[i].code = newProduct.code !== null ? newProduct.code : prods[i].code;
 
             // Una vez actualizado, lo escribimos en nuestro json
             await fs.writeFile(this.path, JSON.stringify(prods))
