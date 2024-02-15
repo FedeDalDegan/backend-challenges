@@ -1,5 +1,6 @@
 // Renombramos las promesas para mejor lectura
 import {promises as fs} from "fs"
+import crypto from "crypto"
 
 export class ProductManager{
     constructor(path){ // Se lo tendremos que enviar como parametro a las instancias generadas
@@ -12,8 +13,9 @@ export class ProductManager{
         const i = prods.findIndex(prod => prod.code === newProduct.code)
         if(newProduct.title && newProduct.desc 
             && newProduct.price && newProduct.thumbnail && 
-            newProduct.code && newProduct.stock && newProduct.id){
+            newProduct.code && newProduct.stock){
             if(i === -1){ // Preguntamos si es = a -1
+                newProduct.id = crypto.randomBytes(10).toString("hex")
                 prods.push(newProduct)
                 await fs.writeFile(this.path, JSON.stringify(prods))
                 return "Producto creado"
@@ -28,7 +30,6 @@ export class ProductManager{
     // Mostrar el ARRAY de productos.
     getProducts = async() => {
         const prods = JSON.parse(await fs.readFile(this.path, "utf-8"))
-        console.log(prods)
         return prods
     }
 

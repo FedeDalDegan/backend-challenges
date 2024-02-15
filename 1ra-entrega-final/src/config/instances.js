@@ -12,12 +12,13 @@ const producto7 = new Product("Slay the Spire", "Turn-Based", 7, 12, "STS")
 const producto8 = new Product("Elden Ring", "Souls", 60, 42, "ED")
 const producto9 = new Product("The Binding of Isaac: Rebirth", "RogueLike", 5, 12, "TBOI")
 const producto10 = new Product("Saints Row IV", "Open World", 6, 20, "SR")
+const producto11 = new Product("FAITH: The unholy trinity", "Pixel-art", 10, 5, "FTH")
 
 // Generamos la instancia
 const productManager = new ProductManager("./productos.json")
 
 // Añadimos los productos a productos.json
-// productManager.addProduct(producto10)
+// productManager.addProduct(producto11)
 
 // Consultamos por todos los productos
 // productManager.getProducts() // Mostrara todos los productos del .JSON

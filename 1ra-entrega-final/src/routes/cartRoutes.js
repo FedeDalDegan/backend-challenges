@@ -1,25 +1,38 @@
+import crypto from "crypto"
 import { Router } from "express"
 import { CartManager } from "../config/CartManager.js"
 
-const cartManager = new CartManager("./cart.json")
 const cartRouter = Router()
 
-/*
-Si bien fue pedido en la entrega, el profesor dijo que no iba a ser tomado en cuenta.
-
+// Creamos un nuevo carrito
 cartRouter.post("/", async (req, res) =>{
     try{
         const id = crypto.randomBytes(10).toString("hex")
-        const cartManager = new CartManager("./cart.json", id) // Enviamos la ruta de donde se generara nuestro nuevo cart
-        return res.status(200).send(`Producto creado con ID ${id}`)
+        const cartManager = new CartManager("./cart.json", id)
+        await cartManager.createCart(id) // Guardamos el ID del carrito
+        return res.status(200).send(`Carrito creado. ID: ${id}`)
     }catch(e){
         res.status(500).send(`Error al crear carrito ${e}`)
     }
 })
-*/
 
+// Obtenemos carrito mediante ID
+cartRouter.get("/:cid", async (req, res) => {
+    try{
+        const cartId = req.params.cid
+        const cartManager = new CartManager("./cart.json")
+        const cart = await cartManager.getCart()
+        const cartById = cart.filter(item => item.id === cartId)
+        res.status(200).send(cartById)
+    }catch(e){
+        res.status(500).send("Error al obtener el carrito. " + e)
+    }
+})
+
+// Obtenemos el carrito actual
 cartRouter.get('/', async (req, res) => {
     try {
+        const cartManager = new CartManager("./cart.json")
         const cart = await cartManager.getCart()
         res.status(200).send(cart)
     } catch (error) {
@@ -27,14 +40,30 @@ cartRouter.get('/', async (req, res) => {
     }
 })
 
+// Agregamos un producto al carrito
 cartRouter.post('/:pid', async (req, res) => {
     try {
+        const cartManager = new CartManager("./cart.json")
         const productId = req.params.pid
         const { quantity } = req.body // Consulto la cantidad
         const mensaje = await cartManager.addProductToCart(productId, quantity) // Una vez que obtenemos el ID y la CANTIDAD, envio dichos datos
         res.status(400).send(mensaje)
     } catch (error) {
         res.status(500).send(`Error interno del servidor al crear producto: ${error}`)
+    }
+})
+
+// Agregamos producto al carrito
+cartRouter.post("/:cid/product/:pid", async (req, res) =>{
+    try{
+        const cartId = req.params.cid
+        const productId = req.params.pid
+        const { quantity } = req.body
+        const cartManager = new CartManager("./cart.json")
+        const mensaje = await cartManager.addProductToCart(productId, quantity, cartId)
+        res.status(200).send(mensaje)
+    }catch(e){
+        res.status(500).send("Error al agregar producto al carrito: " + e)
     }
 })
 

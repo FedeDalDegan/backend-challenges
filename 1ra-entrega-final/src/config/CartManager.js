@@ -1,12 +1,14 @@
 import {promises as fs} from "fs"
 
 export class CartManager {
-    constructor(path){
+    constructor(path, cartId){
         this.products = path // Los productos apuntan a la ruta (cart.json)
+        this.cartId = cartId
     }
 
     getCart = async() => {
         const cart = JSON.parse(await fs.readFile(this.products, "utf-8")) // Siempre leer lo que hay en cart
+        console.log(cart)
         return cart
     }
 
@@ -22,5 +24,11 @@ export class CartManager {
         }
         await fs.writeFile(this.products, JSON.stringify(cart))  // Sea cual sea el caso, se vuelve a reescribir el archivo
         return "Producto cargado correctamente"
+    }
+
+    createCart = async(cartId) => {
+        const existingCarts = JSON.parse(await fs.readFile(this.products, "utf-8"))
+        existingCarts.push({ id: cartId, products: [] })
+        await fs.writeFile(this.products, JSON.stringify(existingCarts))
     }
 }

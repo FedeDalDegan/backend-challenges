@@ -11,7 +11,6 @@ productsRouter.get('/', async (req, res) => {
         let limite = parseInt(limit)
         if (!limite)
             limite = prods.length
-        console.log(limite)
         const prodsLimit = prods.slice(0, limite)
         res.status(200).send(prodsLimit)
 
@@ -36,7 +35,6 @@ productsRouter.get('/:pid', async (req, res) => {
 productsRouter.post('/', async (req, res) => {
     try {
         const product = req.body
-        console.log(product)
         const mensaje = await productManager.addProduct(product)
         if (mensaje == "Producto creado correctamente")
             res.status(200).send(mensaje)
