@@ -29,6 +29,7 @@ cartRouter.get("/:cid", async (req, res) => {
     }
 })
 
+
 // Obtenemos el carrito actual
 cartRouter.get('/', async (req, res) => {
     try {
@@ -66,5 +67,31 @@ cartRouter.post("/:cid/product/:pid", async (req, res) =>{
         res.status(500).send("Error al agregar producto al carrito: " + e)
     }
 })
+
+// Crear carrito para un usuario especifico. ( uid = userId )
+cartRouter.post("/:uid", async (req, res) => {
+    try{
+        const uid = req.params.uid
+        const cartManager = new CartManager()
+        await cartManager.createCart(uid)
+        return res.status(200).send("Carrito creado correctamente para el usuario: " + userId)
+    }catch(e){
+        res.status(500).send("Error al crear el carrito: " + e)
+    }
+})
+
+// Agregamos productos a un carrito de un usuario especifico
+cartRouter.post(":/uid/product/:productId"), async (req, res) => {
+    try{
+        const uid = req.params.uid
+        const productId = req.params.productId
+        const { quantity } = req.body
+        const cartManager = new CartManager()
+        const mensaje = await cartManager.addProductToCart(productId, quantity, uid)
+        res.status(200).send(mensaje)
+    }catch(e){
+        res.status(500).send("Error al agregar producto al carrito: " + e)
+    }
+}
 
 export default cartRouter

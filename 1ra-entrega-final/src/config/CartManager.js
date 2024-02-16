@@ -4,6 +4,13 @@ export class CartManager {
     constructor(path, cartId){
         this.products = path // Los productos apuntan a la ruta (cart.json)
         this.cartId = cartId
+        this.userCarts = {}
+    }
+
+    createCart = async(userId) => {
+        if(!this.userCarts(userId)){
+            this.userCarts[userId] = { id: userId, products: []}
+        }
     }
 
     getCart = async() => {
