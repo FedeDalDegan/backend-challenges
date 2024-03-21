@@ -8,10 +8,10 @@ productsRouter.get('/', async (req, res) => {
     try {
         // Si el usuario no nos envia alguna de estas peticiones, se le devolvera un valor por defecto. Ejemplo limit = 10, page = 1
         const { limit = 10, page = 1, filter, ord } = req.query
-        
-        const metFilter = filter == "true" || filter == "false" ? "status" : filter !== undefined ? "category" : undefined; // Si hay true o false, devolvera el status. Caso de undefined, será por categoria.
-        const query = metFilter ? { [metFilter]: filter } : {};
-        const ordQuery = ord ? { price: ord } : {};
+
+        const metFilter = filter == "true" || filter == "false" ? "status" : filter !== undefined ? "category" : undefined // Si hay true o false, devolvera el status. Caso de undefined, será por categoria.
+        const query = metFilter ? { [metFilter]: filter } : {} // [metFilter] Adopta una propiedad dinamica la cual variara dependiendo el filtro que el usuario quiera aplicar. Si metfilter no esta definido, sera un objeto vacio. {}
+        const ordQuery = ord ? { price: ord } : {} // En caso de aplicar un ordenamiento, ord tomara el valor "asc" o "desc" y se le aplicara a la propiedad "price". En caso de no haber un parametro, se devolvera un objeto vacio. {}
 
         const prods = await productModel.paginate(query, {limit: limit, page: page, sort: ordQuery}) // Esto enviaremos y paginaremos
         /*
